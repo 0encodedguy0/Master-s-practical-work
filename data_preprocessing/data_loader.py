@@ -50,7 +50,7 @@ CATEGORIES = MATH_CLASSES + CS_CLASSES + PHYSICS_CLASSES + Q_BIO_CLASSES + STAT_
 ARTICLES_TO_DOWNLOAD = 2000
 MAX_PER_PAGE = 100
 THREADS = 8
-OUTPUT_DIR = "arxiv_articles"
+OUTPUT_DIR = "data"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
@@ -92,6 +92,18 @@ def download_and_process(entry):
         return None
     
 
+def delete_pdf_files(folder_path):
+    # Проходим по всем файлам в указанной папке
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.pdf'):  # Проверяем расширение файла
+            file_path = os.path.join(folder_path, filename)
+            try:
+                os.remove(file_path)  # Удаляем файл
+                print(f"Файл {filename} был удалён.")
+            except Exception as e:
+                print(f"Ошибка при удалении файла {filename}: {e}")
+    
+
 def main():
     output_path = os.path.join(OUTPUT_DIR, "articles.jsonl")
     all_entries = []
@@ -126,6 +138,8 @@ def main():
                     out_file.write(json.dumps(result, ensure_ascii=False) + "\n")
                     saved += 1
 
+    pdfs_path = './data'
+    delete_pdf_files(pdfs_path)
     print(f"\nГотово! Сохранено {saved} статей в {output_path}")
 
 
