@@ -104,7 +104,7 @@ sns.barplot(x="Model", y="ROUGE-1", data=results_df, palette="Blues_d")
 plt.title("ROUGE-1 Comparison Across Models")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("rouge1_comparison.png")
+plt.savefig("/pics/rouge1_comparison_baseline.png")
 plt.show()
 
 # ROUGE-2
@@ -113,7 +113,7 @@ sns.barplot(x="Model", y="ROUGE-2", data=results_df, palette="Greens_d")
 plt.title("ROUGE-2 Comparison Across Models")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("rouge2_comparison.png")
+plt.savefig("/pics/rouge2_comparison_baseline.png")
 plt.show()
 
 # BLEU
@@ -122,7 +122,7 @@ sns.barplot(x="Model", y="BLEU", data=results_df, palette="Reds_d")
 plt.title("BLEU Comparison Across Models")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("bleu_comparison.png")
+plt.savefig("/pics/bleu_comparison_baseline.png")
 plt.show()
 
 # Скорость vs Качество
@@ -132,5 +132,5 @@ plt.title("Speed vs Quality Tradeoff (Data)")
 plt.xlabel("Average Time per Sample (sec)")
 plt.ylabel("ROUGE-1")
 plt.tight_layout()
-plt.savefig("speed_vs_quality.png")
+plt.savefig("/pics/speed_vs_quality_baseline.png")
 plt.show()
