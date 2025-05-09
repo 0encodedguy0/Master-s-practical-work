@@ -73,3 +73,73 @@ plt.ylabel("ROUGE-1")
 plt.tight_layout()
 plt.savefig("/pics/compare_speed_vs_quality_all_strategies.png")
 plt.show()
+
+# === 7. Итоговая таблица по среднему ROUGE-1 для каждой стратегии ===
+
+avg_rouge_by_strategy = (
+    combined.groupby("Strategy")["ROUGE-1"]
+    .mean()
+    .reset_index()
+    .sort_values(by="ROUGE-1", ascending=False)
+)
+
+print("\n=== Среднее значение ROUGE-1 по стратегиям ===")
+print(avg_rouge_by_strategy)
+
+# === 8. Лучшая модель в каждой стратегии по ROUGE-1 ===
+
+best_models = (
+    combined.loc[combined.groupby("Strategy")["ROUGE-1"].idxmax()]
+    .sort_values(by="ROUGE-1", ascending=False)
+    .reset_index(drop=True)
+)
+
+print("\n=== Лучшие модели в каждой стратегии (по ROUGE-1) ===")
+print(best_models[["Strategy", "Model", "ROUGE-1", "BLEU", "Avg_time_per_sample"]])
+
+# === 9. Сохраняем итоговые таблицы ===
+
+avg_rouge_by_strategy.to_csv("/data/summary_avg_rouge1_by_strategy.csv", index=False)
+best_models.to_csv("/data/summary_best_models_by_strategy.csv", index=False)
+
+# === 10. Рейтинг моделей: ROUGE-1 и скорость ===
+
+# Нормализация: чем выше ROUGE-1 — тем лучше, чем ниже время — тем лучше
+ranked = combined.copy()
+ranked["ROUGE-1_norm"] = ranked["ROUGE-1"] / ranked["ROUGE-1"].max()
+ranked["Time_norm"] = 1 - (ranked["Avg_time_per_sample"] / ranked["Avg_time_per_sample"].max())
+
+# Весовая сумма: можно варьировать веса
+alpha = 0.7  # Вес для качества
+beta = 0.3   # Вес для скорости
+
+ranked["Composite_Score"] = alpha * ranked["ROUGE-1_norm"] + beta * ranked["Time_norm"]
+
+# Отсортированный рейтинг
+ranked_sorted = ranked.sort_values(by="Composite_Score", ascending=False).reset_index(drop=True)
+
+print("\n=== Общий рейтинг моделей (качество + скорость) ===")
+print(ranked_sorted[["Strategy", "Model", "ROUGE-1", "Avg_time_per_sample", "Composite_Score"]].head(10))
+
+# Сохраняем в файл
+ranked_sorted.to_csv("/data/summary_ranked_models.csv", index=False)
+
+# === 11. Визуализация итогового рейтинга моделей ===
+
+top_n = 10  # Сколько лучших моделей показать
+
+plt.figure(figsize=(14, 6))
+sns.barplot(
+    data=ranked_sorted.head(top_n),
+    x="Model",
+    y="Composite_Score",
+    hue="Strategy",
+    dodge=False,
+    palette="viridis"
+)
+plt.title(f"Top {top_n} Models by Composite Score (Quality + Speed)")
+plt.ylabel("Composite Score (0–1)")
+plt.xticks(rotation=45, ha="right")
+plt.tight_layout()
+plt.savefig("/pics/ranked_models_composite_score.png")
+plt.show()
