@@ -1,7 +1,8 @@
 csv
+datasets==3.6.0
 evaluate==0.4.3
 feedparser
-matplotlib
+matplotlib==3.10.0
 PyMuPDF
 jsonpatch==1.33
 jsonpickle==4.0.5
@@ -12,8 +13,8 @@ pandas==2.2.2
 regex==2024.11.6
 requests==2.32.3
 rouge_score==0.1.2
-seaborn
+seaborn==0.13.2
 sumy==0.11.0
 time
-torch
-transformers
+torch==2.6.0
+transformers==4.51.3
